@@ -1,0 +1,49 @@
+### Parse site
+POST http://127.0.0.1:8089/api/parsers
+Content-Type: application/json
+
+{
+  "URL": "https://www.vedomosti.ru/info/rss",
+  "HeaderSets": [
+    {
+      "Key": "User-Agent",
+      "Value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:101.0) Gecko/20100101 Firefox/101.0"
+    },
+    {
+      "Key": "Accept",
+      "Value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8"
+    },
+    {
+      "Key": "Content-Type",
+      "Value": "text/html; charset=utf-8"
+    }
+  ],
+  "Selection": {
+    "Find": [
+      {
+        "Tag": "table",
+        "Class": ".tg",
+        "GetValue": false,
+        "Find": [
+          {
+            "Tag": "tr",
+            "GetValue": false,
+            "Find": [
+              {
+                "Class": ".tg-1jpd",
+                "GetValue": true,
+                "Find": [
+                  {
+                    "Class": ".tg-bbpb",
+                    "GetValue": true,
+                    "Attr": "href"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
