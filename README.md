@@ -16,6 +16,7 @@ cd cmd/server && go build -o parser_test
 | PARSER_PORT | Порт запуска сервера | 8080         |
 
 ## Пример ENV для старта сервера
-
+```Bash
+export PARSER_HOST=localhost
+export PARSER_PORT=8080
 ```
-HOST=localhost;PORT=8080
