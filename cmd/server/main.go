@@ -4,18 +4,22 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"parser_test/config"
 	"parser_test/internal/router"
 	"time"
 )
 
 func main() {
+	if err := config.Init(); err != nil {
+		log.Fatal(err)
+	}
 	r := mux.NewRouter()
 	router.InitRouter(r)
 	runMuxServer(r)
 }
 
 func runMuxServer(router *mux.Router) {
-	startServer := "0.0.0.0:8089"
+	startServer := config.GetSettings().Host + ":" + config.GetSettings().Port
 	srv := &http.Server{
 		Handler: router,
 		Addr:    startServer,

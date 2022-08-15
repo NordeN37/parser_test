@@ -3,8 +3,12 @@ module parser_test
 go 1.18
 
 require (
-	github.com/PuerkitoBio/goquery v1.8.0 // indirect
+	github.com/PuerkitoBio/goquery v1.8.0
+	github.com/gorilla/mux v1.8.0
+	github.com/kelseyhightower/envconfig v1.4.0
+)
+
+require (
 	github.com/andybalholm/cascadia v1.3.1 // indirect
-	github.com/gorilla/mux v1.8.0 // indirect
 	golang.org/x/net v0.0.0-20210916014120-12bc252f5db8 // indirect
 )
