@@ -3,8 +3,8 @@ package config
 import "github.com/kelseyhightower/envconfig"
 
 type Config struct {
-	Host string `envconfig:"HOST" default:"localhost"`
-	Port string `envconfig:"PORT" default:"8080"`
+	Host string `envconfig:"PARSER_HOST" default:"localhost"`
+	Port string `envconfig:"PARSER_PORT" default:"8080"`
 }
 
 var settings Config
