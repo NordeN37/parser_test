@@ -5,7 +5,9 @@ import (
 	"log"
 	"net/http"
 	"parser_test/config"
+	"parser_test/internal/bl"
 	"parser_test/internal/router"
+	"parser_test/internal/store/mongo"
 	"time"
 )
 
@@ -13,8 +15,19 @@ func main() {
 	if err := config.Init(); err != nil {
 		log.Fatal(err)
 	}
+
+	mongoClient, err := mongo.NewMongoClient()
+	if err != nil {
+		log.Fatal("[ERROR] : ", "MongoClient error", err.Error())
+	}
+	mongoRepo, err := mongo.NewMongoRepo(mongoClient)
+	if err != nil {
+		log.Fatal("[ERROR] : ", "MongoRepo error", err.Error())
+	}
+	serverBl := bl.NewBL(mongoRepo)
+
 	r := mux.NewRouter()
-	router.InitRouter(r)
+	router.InitRouter(r, serverBl)
 	runMuxServer(r)
 }
 

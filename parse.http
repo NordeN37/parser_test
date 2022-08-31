@@ -1,5 +1,5 @@
 ### Parse site
-POST http://127.0.0.1:8089/api/parsers
+POST http://127.0.0.1:8080/api/parsers
 Content-Type: application/json
 
 {
@@ -21,7 +21,6 @@ Content-Type: application/json
   "Selection": {
     "Find": [
       {
-        "Tag": "table",
         "Class": ".tg",
         "GetValue": false,
         "Find": [
@@ -31,14 +30,11 @@ Content-Type: application/json
             "Find": [
               {
                 "Class": ".tg-1jpd",
-                "GetValue": true,
-                "Find": [
-                  {
-                    "Class": ".tg-bbpb",
-                    "GetValue": true,
-                    "Attr": "href"
-                  }
-                ]
+                "GetValue": true
+              },
+              {
+                "Class": ".tg-bbpb",
+                "GetValue": true
               }
             ]
           }

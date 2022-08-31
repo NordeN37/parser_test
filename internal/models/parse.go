@@ -16,13 +16,9 @@ type Selection struct {
 }
 
 type Find struct {
-	Tag      string
-	Class    string
-	GetValue bool
-	GetAttr  *GetAttr
+	Tag      *string // html tag
+	Class    *string // html class
+	Id       *string // html id
+	GetValue bool    // get value
 	Find     []*Find
-}
-
-type GetAttr struct {
-	Attr string
 }
