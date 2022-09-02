@@ -3,11 +3,12 @@ package bl
 import (
 	"errors"
 	"fmt"
-	"github.com/PuerkitoBio/goquery"
 	"net/http"
 	"parser_test/internal/models"
 	"parser_test/internal/store/mongo"
 	"time"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 type IParseHtml interface {
@@ -32,8 +33,7 @@ func (ph *parseHtml) ParseHtml(res *http.Response, selection models.Selection, s
 		return nil, err
 	}
 
-	//var parsSelectResult = new(parseSelectionResult)
-	//parseSelection(doc, parsSelectResult, selection.Find, "")
+	var parsArray = parseSelection(doc.Selection, selection.Find, "")
 
 	result := make(map[string]interface{})
 	// Find the review items
@@ -45,7 +45,7 @@ func (ph *parseHtml) ParseHtml(res *http.Response, selection models.Selection, s
 		saveResult := &models.ParserResult{
 			Date:        time.Now(),
 			Name:        res.Request.Host,
-			Description: result,
+			Description: FromDto(parsArray),
 		}
 		err := ph.mongoRepo.Parser.Store(saveResult)
 		if err != nil {
@@ -56,13 +56,32 @@ func (ph *parseHtml) ParseHtml(res *http.Response, selection models.Selection, s
 	return result, nil
 }
 
-type parseSelectionResult struct {
-	value      *string
-	foundValue *parseSelectionResult
+type ParseSelectionResult struct {
+	Value      *string
+	FoundValue *[]ParseSelectionResult
 }
 
-func parseSelection(doc *goquery.Document, result *parseSelectionResult, selection []*models.Find, find string) {
+func FromDto(p *[]ParseSelectionResult) *[]models.ParseSelectionResult {
+	var parsSelectResult []models.ParseSelectionResult
+
+	if p != nil {
+		for _, value := range *p {
+			var convert = models.ParseSelectionResult{
+				Value:      value.Value,
+				FoundValue: FromDto(value.FoundValue),
+			}
+			parsSelectResult = append(parsSelectResult, convert)
+		}
+	}
+
+	return &parsSelectResult
+}
+
+func parseSelection(doc *goquery.Selection, selection []*models.Find, find string) *[]ParseSelectionResult {
+	var parsSelectResult []ParseSelectionResult
+
 	for _, startFindValue := range selection {
+		var find string
 		if startFindValue.Tag != nil {
 			find = *startFindValue.Tag
 		}
@@ -75,18 +94,20 @@ func parseSelection(doc *goquery.Document, result *parseSelectionResult, selecti
 
 		// Find the review items
 		doc.Find(find).Each(func(i int, s *goquery.Selection) {
-			switch {
-			case startFindValue.Find != nil && startFindValue.GetValue:
+			var lineParse = ParseSelectionResult{}
+
+			if startFindValue.GetValue {
 				sText := s.Text()
-				result.value = &sText
-				parseSelection(doc, result.foundValue, startFindValue.Find, find)
-			case startFindValue.GetValue:
-				sText := s.Text()
-				result.value = &sText
-			case startFindValue.Find != nil:
-				parseSelection(doc, result.foundValue, startFindValue.Find, find)
+				lineParse.Value = &sText
 			}
+
+			if startFindValue.Find != nil {
+				lineParse.FoundValue = parseSelection(s, startFindValue.Find, find)
+			}
+
+			parsSelectResult = append(parsSelectResult, lineParse)
 		})
 	}
-	return
+
+	return &parsSelectResult
 }
