@@ -12,7 +12,7 @@ import (
 )
 
 type IParseHtml interface {
-	ParseHtml(res *http.Response, selection models.Selection, saveFile bool) (map[string]interface{}, error)
+	ParseHtml(res *http.Response, selection models.Selection, saveFile bool) (*[]models.ParseSelectionResult, error)
 }
 
 func NewParseHtml(mongoRepo *mongo.MongoRepo) IParseHtml {
@@ -23,7 +23,7 @@ type parseHtml struct {
 	mongoRepo *mongo.MongoRepo
 }
 
-func (ph *parseHtml) ParseHtml(res *http.Response, selection models.Selection, saveFile bool) (map[string]interface{}, error) {
+func (ph *parseHtml) ParseHtml(res *http.Response, selection models.Selection, saveFile bool) (*[]models.ParseSelectionResult, error) {
 	if res.StatusCode != 200 {
 		return nil, errors.New(fmt.Sprintf("status code error: %d %s", res.StatusCode, res.Status))
 	}
@@ -33,27 +33,21 @@ func (ph *parseHtml) ParseHtml(res *http.Response, selection models.Selection, s
 		return nil, err
 	}
 
-	var parsArray = parseSelection(doc.Selection, selection.Find, "")
-
-	result := make(map[string]interface{})
-	// Find the review items
-	doc.Find("tr").Each(func(i int, s *goquery.Selection) {
-		result[s.Find(".tg-1jpd").Text()] = s.Find(".tg-bbpb").Text()
-	})
+	var parsArray = FromDto(parseSelection(doc.Selection, selection.Find, ""))
 
 	if saveFile {
 		saveResult := &models.ParserResult{
 			Date:        time.Now(),
 			Name:        res.Request.Host,
-			Description: FromDto(parsArray),
+			Description: parsArray,
 		}
 		err := ph.mongoRepo.Parser.Store(saveResult)
 		if err != nil {
 			return nil, err
 		}
-		return nil, nil
+		return parsArray, nil
 	}
-	return result, nil
+	return parsArray, nil
 }
 
 type ParseSelectionResult struct {

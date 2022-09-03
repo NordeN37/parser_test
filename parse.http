@@ -3,7 +3,7 @@ POST http://127.0.0.1:8080/api/parsers
 Content-Type: application/json
 
 {
-  "URL": "https://www.vedomosti.ru/info/rss",
+  "URL": "https://ria.ru/20220903/svo-1814172985.html",
   "HeaderSets": [
     {
       "Key": "User-Agent",
@@ -21,19 +21,25 @@ Content-Type: application/json
   "Selection": {
     "Find": [
       {
-        "Class": ".tg",
+        "Class": ".layout-article__600-align",
         "GetValue": false,
         "Find": [
           {
-            "Tag": "tr",
+            "Class": ".article__header",
             "GetValue": false,
             "Find": [
               {
-                "Class": ".tg-1jpd",
+                "Class": ".article__title",
                 "GetValue": true
-              },
+              }
+            ]
+          },
+          {
+            "Class": ".article__body",
+            "GetValue": false,
+            "Find": [
               {
-                "Class": ".tg-bbpb",
+                "Class": ".article__text",
                 "GetValue": true
               }
             ]
