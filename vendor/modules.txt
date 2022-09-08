@@ -1,3 +1,7 @@
+# github.com/NordeN37/parser_html_page v0.0.5
+## explicit; go 1.16
+github.com/NordeN37/parser_html_page
+github.com/NordeN37/parser_html_page/models
 # github.com/PuerkitoBio/goquery v1.8.0
 ## explicit; go 1.13
 github.com/PuerkitoBio/goquery
@@ -80,7 +84,7 @@ go.mongodb.org/mongo-driver/x/mongo/driver/wiremessage
 ## explicit; go 1.17
 golang.org/x/crypto/ocsp
 golang.org/x/crypto/pbkdf2
-# golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2
+# golang.org/x/net v0.0.0-20220907135653-1e95f45603a7
 ## explicit; go 1.17
 golang.org/x/net/html
 golang.org/x/net/html/atom

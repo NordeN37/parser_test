@@ -27,7 +27,7 @@ type parserResult struct {
 }
 
 func (pr *parserResult) Store(document *models.ParserResult) error {
-	collection := pr.mongo.Database(pr.dbName).Collection(pr.collectionName)
+	collection := pr.mongo.Database(pr.dbName).Collection(document.Name)
 	insertResult, err := collection.InsertOne(context.Background(), document)
 	if err != nil {
 		return errors.Wrapf(err, "ошибка обращения к collection.InsertOne")

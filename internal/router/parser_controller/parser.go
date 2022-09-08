@@ -2,24 +2,33 @@ package parser_controller
 
 import (
 	"encoding/json"
+	"github.com/NordeN37/parser_html_page"
+	pmodels "github.com/NordeN37/parser_html_page/models"
+	"log"
 	"net/http"
-	"parser_test/internal/models"
-	"parser_test/internal/util"
+	"net/url"
 )
 
 func (pc *ParserController) Parser(_ http.ResponseWriter, r *http.Request) (interface{}, error) {
-	var parse models.Parse
+	var parse pmodels.Parse
 	if err := json.NewDecoder(r.Body).Decode(&parse); err != nil {
 		return nil, err
 	}
 
-	response, err := util.GetResponse(parse.Url, parse.HeaderSets)
+	resultParse, err := parser_html_page.GetResultParseHtml(parse)
 	if err != nil {
 		return nil, err
 	}
-	defer response.Body.Close()
 
-	resultParse, err := pc.bl.Parser.ParseHtml(response, parse.Selection, true)
+	var collectionHostName string
+	url, err := url.Parse(parse.Url)
+	if err != nil {
+		collectionHostName = "host_not_found"
+		log.Println(err.Error())
+	}
+	collectionHostName = url.Host
+
+	err = pc.bl.Parser.ParseHtml(resultParse, collectionHostName, true)
 	if err != nil {
 		return nil, err
 	}
